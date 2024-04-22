@@ -6,11 +6,20 @@ The project was deploy with offline mode for saving costs. After that, the pipel
 
 An Amazon SageMaker Model Building Pipelines instance is composed of three components:
 
-Name: Unique (account, region)
+* Name: Unique (account, region)
 
-Parameters: input parameters specified when triggering a pipeline execution. They need to be explicitly defined when creating the pipeline and contain default values.
+* Parameters: input parameters specified when triggering a pipeline execution. They need to be explicitly defined when creating the pipeline and contain default values.
 
-Steps: define the actions that the pipeline takes and the relationships between steps using properties
+* Steps: define the actions that the pipeline takes and the relationships between steps using properties
+
+* SageMaker pipeline as DAG of Airflow
+  * We can define task with Python script 
+  * The Python script can be stored on `S3 Bucket` or `Notebook`
+  * We can use `SageMaker Algorithm` or `User Custom Algorithm`
+  * We can passed the variable between steps
+  * We can choose 
+    * Run on `local` to testing
+    * Run on `cloud` to production
 
 ![DAG](images/image.png)
 
@@ -63,6 +72,31 @@ Follows a typical machine learning (ML) application pattern of preprocessing, tr
 * **Condition step**
   * We define the failed model if the metric on `EvaluationStep` over the `threshold` 
   * **Example**: We defined the `threshold of MSE` is `7.0`. After `EvaluationStep`, if we have MSE value is `8.0`, the current model is `failed`, otherwise if we have MSE value is `6.0`, we will register the `Model` to `Model Package`
+```
+from sagemaker.workflow.fail_step import FailStep
+
+step_fail = FailStep(
+    name="AbaloneMSEFail",
+    error_message=Join(on=" ", values=["Execution failed due to MSE >", mse_threshold]),
+)
+
+cond_lte = ConditionLessThanOrEqualTo(
+    left=JsonGet(
+        step_name=step_eval.name,
+        property_file=evaluation_report,
+        json_path="regression_metrics.mse.value",
+    ),
+    right=mse_threshold,
+)
+
+step_cond = ConditionStep(
+    name="AbaloneMSECond",
+    conditions=[cond_lte],
+    if_steps=[step_create_model, step_transform],
+    else_steps=[step_fail],
+)
+```
+
   * If passed
     * **Create Model step**
       * Create Model to **Batch Transformation**
