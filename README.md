@@ -12,13 +12,13 @@ Parameters: input parameters specified when triggering a pipeline execution. The
 
 Steps: define the actions that the pipeline takes and the relationships between steps using properties
 
-![DAG](image.png)
+![DAG](images/image.png)
 
 ## 2. Orchestrate Jobs example
 
 Follows a typical machine learning (ML) application pattern of preprocessing, training, evaluation, model creation, batch transformation, and model registration
 
-![alt text](image-1.png)
+![alt text](images/image-1.png)
 
 ### **Set up session**
   
@@ -87,7 +87,7 @@ Note:**
 * Steps passed into the pipeline do not have to be listed in the order of execution. The SageMaker Pipeline service resolves the data dependency DAG as steps for the execution to complete.
 * Steps must be unique to across the pipeline step list and all condition step if/else lists.
 
-![alt text](image-2.png)
+![alt text](images/image-2.png)
 
 ```
 from sagemaker.workflow.pipeline import Pipeline
