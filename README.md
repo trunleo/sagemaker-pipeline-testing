@@ -121,7 +121,7 @@ Note:**
 * Steps passed into the pipeline do not have to be listed in the order of execution. The SageMaker Pipeline service resolves the data dependency DAG as steps for the execution to complete.
 * Steps must be unique to across the pipeline step list and all condition step if/else lists.
 
-![alt text](images/image-2.png)
+![SageMaker pipeline](images/image-2.png)
 
 ```
 from sagemaker.workflow.pipeline import Pipeline
